@@ -39,17 +39,24 @@ echo [OK] Files installed
 echo.
 echo [2/3] Setting up auto-start...
 
-REM Create VBScript to run EXE silently on boot
+REM Create VBScript to run ngrok and EXE silently on boot
 (
 echo Set WshShell = CreateObject^("WScript.Shell"^)
+echo WshShell.Run "cmd /c start /B ngrok http 5000", 0, False
+echo WScript.Sleep 3000
 echo WshShell.Run """%INSTALL_DIR%\RemoteWebcam.exe""", 0, False
 ) > "%STARTUP_DIR%\RemoteWebcam.vbs"
 
 echo [OK] Auto-start configured
 
 echo.
-echo [3/3] Starting service...
+echo [3/3] Starting services...
 
+echo Starting ngrok...
+start /B cmd /c "ngrok http 5000"
+timeout /t 3 /nobreak >nul
+
+echo Starting RemoteWebcam...
 start "" "%INSTALL_DIR%\RemoteWebcam.exe"
 timeout /t 5 /nobreak >nul
 
